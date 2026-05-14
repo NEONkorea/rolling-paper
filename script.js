@@ -1,14 +1,9 @@
 /* ══════════════════════════════════════
    script.js — 성시현 선생님 롤링페이퍼
-   Google Sheets 백엔드 버전
+   Google Sheets 백엔드 (GET 전용, CORS 문제 없음)
 ══════════════════════════════════════ */
 
-/* ──────────────────────────────────────
-   ✏️ Apps Script 웹 앱 URL
-   배포 후 받은 URL을 아래에 붙여넣으세요!
-────────────────────────────────────── */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw3Cp2FdL2QAfTjqLK75uizF82WIcKsexUAsQ8WgaFvA-eC2VOwx2GqA7zGjBO1D2kP/exec';
-// 예시: 'https://script.google.com/macros/s/AKfy.../exec'
 
 /* ── 상태 변수 ── */
 let selectedColor = 'yellow';
@@ -56,11 +51,11 @@ function escapeHtml(str) {
 }
 
 /* ══════════════════════════════════════
-   편지 목록 불러오기 (Google Sheets GET)
+   편지 목록 불러오기
 ══════════════════════════════════════ */
 async function fetchLetters() {
   try {
-    const res  = await fetch(API_URL);
+    const res  = await fetch(API_URL + '?action=read');
     const data = await res.json();
     letters = Array.isArray(data) ? data : [];
     renderLetters();
@@ -81,7 +76,6 @@ function renderLetters() {
     emptyMsg.style.display = 'block';
   } else {
     emptyMsg.style.display = 'none';
-
     letters.forEach((letter, idx) => {
       const rot = (Math.random() * 6 - 3).toFixed(2);
       const div = document.createElement('div');
@@ -89,7 +83,6 @@ function renderLetters() {
       div.style.setProperty('--rot', rot + 'deg');
       div.style.transform      = `rotate(${rot}deg)`;
       div.style.animationDelay = (idx * 0.07) + 's';
-
       const safeMsg = escapeHtml(letter.message).replace(/\n/g, '<br>');
       div.innerHTML = `
         <div class="postit-pin"></div>
@@ -106,18 +99,19 @@ function renderLetters() {
 }
 
 /* ══════════════════════════════════════
-   편지 제출 → Google Sheets POST
+   편지 제출 → GET 방식으로 Sheets에 저장
+   (POST 대신 GET 사용 — CORS 문제 완전 해결)
 ══════════════════════════════════════ */
 async function submitLetter() {
   const messageEl = document.getElementById('inputMessage');
   const message   = messageEl.value.trim();
   if (!message) { shakeInput(messageEl); return; }
 
-  const now  = new Date();
-  const date = `${now.getMonth() + 1}/${now.getDate()}`;
+  const now    = new Date();
+  const date   = `${now.getMonth() + 1}/${now.getDate()}`;
   const letter = { message, color: selectedColor, date, timestamp: Date.now() };
 
-  // 즉시 로컬에 추가해서 화면에 먼저 보여줌 (빠른 피드백)
+  // 화면에 즉시 표시
   letters.push(letter);
   renderLetters();
   messageEl.value = '';
@@ -127,16 +121,18 @@ async function submitLetter() {
     document.getElementById('boardSurface').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 200);
 
-  // 백그라운드에서 Sheets에 저장
+  // GET 방식으로 저장 (CORS 없음)
   try {
-    await fetch(API_URL, {
-      method:  'POST',
-      body:    JSON.stringify(letter),
-      headers: { 'Content-Type': 'application/json' }
+    const params = new URLSearchParams({
+      action:    'write',
+      message:   encodeURIComponent(message),
+      color:     selectedColor,
+      date:      date,
+      timestamp: letter.timestamp
     });
+    await fetch(`${API_URL}?${params}`);
   } catch (err) {
     console.error('저장 실패:', err);
-    showToast('⚠ 저장 실패. 새로고침 후 다시 시도해 주세요.');
   }
 }
 
@@ -231,5 +227,5 @@ function initScrollFade() {
 document.addEventListener('DOMContentLoaded', () => {
   initCodeRain();
   initScrollFade();
-  fetchLetters();   // Sheets에서 편지 불러오기
+  fetchLetters();
 });
