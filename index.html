@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성시현 선생님께 드리는 롤링페이퍼 💚</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@300;400;500;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 코드 레인 배경 -->
+<div class="bg-code-rain" id="codeRain"></div>
+
+<!-- ── 헤더 ── -->
+<header>
+  <div class="header-badge">// TEACHER'S DAY · 2025.05.15</div>
+  <h1 class="main-title">🌹 성시현 선생님께<br>드리는 롤링페이퍼</h1>
+  <p class="sub-title">COMPUTER SCIENCE · CLASS OF 2025</p>
+</header>
+
+<!-- ── 칠판 ── -->
+<div class="board-frame fade-in">
+  <div class="board-outer">
+    <div class="board-surface" id="boardSurface">
+
+      <!-- 귀퉁이 장식 -->
+      <span class="corner-deco corner-tl">if(student.loves == true) {
+  teacher.smile();
+}</span>
+      <span class="corner-deco corner-tr">class Teacher {
+  passion = ∞;
+  impact = forever;
+}</span>
+      <span class="corner-deco corner-bl">while(true) {
+  learn();
+  grow();
+}</span>
+      <span class="corner-deco corner-br">// 감사합니다 ♥
+// thank_you.exe</span>
+
+      <!-- 칠판 상단 장식 -->
+      <div class="board-decorations">
+        <div class="chalk-code-block">def best_teacher(name):
+    if name == "성시현":
+        return "최고의 선생님! 🏆"
+    return "선생님"
+
+print(best_teacher("성시현"))</div>
+
+        <div>
+          <div class="chalk-title-board">🌹 스승의 날 롤링페이퍼 🌹</div>
+          <div class="chalk-diagram">┌──────────────────────┐
+│  Computer Science    │
+│  선생님 감사합니다!  │
+│  ★ 성시현 선생님 ★  │
+└──────────────────────┘</div>
+        </div>
+
+        <div class="chalk-code-block">// 선생님 스펙
+const teacher = {
+  name: "성시현",
+  subject: "컴퓨터과학",
+  kindness: Infinity,
+  skill: "Expert"
+};</div>
+      </div>
+
+      <div class="chalk-divider"></div>
+
+      <!-- 포스트잇 영역 -->
+      <div class="postits-grid" id="postitsGrid">
+        <div class="empty-message" id="emptyMsg">
+          아직 편지가 없어요...<br>
+          아래에서 선생님께 편지를 적어보세요! 💌
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 분필 트레이 -->
+    <div class="chalk-tray">
+      <div class="chalk-stick" style="width:70px;background:#f0ede0;"></div>
+      <div class="chalk-stick" style="width:55px;background:#f5e642;"></div>
+      <div class="chalk-stick" style="width:45px;background:#7ec8e3;"></div>
+      <div class="chalk-stick" style="width:60px;background:#f4a7b9;"></div>
+      <div class="chalk-stick" style="width:40px;background:#c8e6c0;"></div>
+      <div class="chalk-stick" style="width:50px;background:#f5a623;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 편지 작성 폼 ── -->
+<div class="letter-section fade-in">
+  <div class="letter-card">
+    <div class="letter-header">선생님께 편지 작성하기</div>
+
+    <div class="form-group">
+      <label>STRING message = """</label>
+      <textarea id="inputMessage" placeholder="선생님께 하고 싶은 말을 적어주세요 💚" maxlength="200"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>COLOR postit_color =</label>
+      <div class="color-picker">
+        <div class="color-option selected" data-color="yellow" data-label="노랑" style="background:#fef08a;" onclick="selectColor(this)"></div>
+        <div class="color-option" data-color="green"  data-label="초록" style="background:#bbf7d0;" onclick="selectColor(this)"></div>
+        <div class="color-option" data-color="blue"   data-label="파랑" style="background:#bae6fd;" onclick="selectColor(this)"></div>
+        <div class="color-option" data-color="pink"   data-label="분홍" style="background:#fbcfe8;" onclick="selectColor(this)"></div>
+        <div class="color-option" data-color="orange" data-label="주황" style="background:#fed7aa;" onclick="selectColor(this)"></div>
+        <div class="color-option" data-color="purple" data-label="보라" style="background:#e9d5ff;" onclick="selectColor(this)"></div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitLetter()">칠판에 붙이기 [ Enter ]</button>
+    <div class="letter-count" id="letterCount">// 총 0개의 편지가 붙어 있습니다.</div>
+  </div>
+</div>
+
+<!-- ── 모달 ── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-card" id="modalCard">
+    <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button>
+    <div class="modal-author" id="modalAuthor"></div>
+    <div class="modal-message" id="modalMessage"></div>
+  </div>
+</div>
+
+<!-- ── 토스트 ── -->
+<div class="toast" id="toast">✓ 편지가 칠판에 붙었습니다!</div>
+
+<script src="script.js"></script>
+</body>
+</html>
