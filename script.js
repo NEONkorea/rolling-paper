@@ -1,9 +1,14 @@
 /* ══════════════════════════════════════
    script.js — 성시현 선생님 롤링페이퍼
-   Google Sheets 백엔드 (GET 전용, CORS 문제 없음)
+   JSONBin.io 백엔드 (무료, CORS 완전 지원)
+   
+   ★ 사용 전 아래 두 줄을 반드시 채워주세요 ★
 ══════════════════════════════════════ */
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbw3Cp2FdL2QAfTjqLK75uizF82WIcKsexUAsQ8WgaFvA-eC2VOwx2GqA7zGjBO1D2kP/exec';
+const JSONBIN_BIN_ID  = '6a058dd4250b1311c34b11a2';   // ← JSONBin에서 생성한 Bin ID
+const JSONBIN_API_KEY = '$2a$10$cSEG.dW9WgzLHDluVnqsyuvrJM3jAWy5uq5RyXt6WhjG0Aoe9zOne';   // ← JSONBin API Key (X-Master-Key)
+
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 
 /* ── 상태 변수 ── */
 let selectedColor = 'yellow';
@@ -51,16 +56,24 @@ function escapeHtml(str) {
 }
 
 /* ══════════════════════════════════════
-   편지 목록 불러오기
+   편지 목록 불러오기 (JSONBin READ)
 ══════════════════════════════════════ */
 async function fetchLetters() {
   try {
-    const res  = await fetch(API_URL + '?action=read');
+    const res = await fetch(JSONBIN_URL + '/latest', {
+      headers: {
+        'X-Master-Key': JSONBIN_API_KEY,
+        'X-Bin-Meta':   'false'   // 데이터만 받기 (메타 정보 제외)
+      }
+    });
+    if (!res.ok) throw new Error('읽기 실패: ' + res.status);
     const data = await res.json();
     letters = Array.isArray(data) ? data : [];
     renderLetters();
   } catch (err) {
     console.error('편지 불러오기 실패:', err);
+    letters = [];
+    renderLetters();
   }
 }
 
@@ -99,8 +112,23 @@ function renderLetters() {
 }
 
 /* ══════════════════════════════════════
-   편지 제출 → GET 방식으로 Sheets에 저장
-   (POST 대신 GET 사용 — CORS 문제 완전 해결)
+   편지 저장 (JSONBin UPDATE — PUT 전체 덮어쓰기)
+   JSONBin 무료 플랜은 전체 배열을 PUT으로 교체하는 방식
+══════════════════════════════════════ */
+async function saveLetters() {
+  const res = await fetch(JSONBIN_URL, {
+    method:  'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_API_KEY
+    },
+    body: JSON.stringify(letters)
+  });
+  if (!res.ok) throw new Error('저장 실패: ' + res.status);
+}
+
+/* ══════════════════════════════════════
+   편지 제출
 ══════════════════════════════════════ */
 async function submitLetter() {
   const messageEl = document.getElementById('inputMessage');
@@ -121,16 +149,13 @@ async function submitLetter() {
     document.getElementById('boardSurface').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 200);
 
-  // GET + no-cors 방식으로 저장 (이중인코딩 제거, 리다이렉트 우회)
-  const params = new URLSearchParams({
-    action:    'write',
-    message:   message,
-    color:     selectedColor,
-    date:      date,
-    timestamp: letter.timestamp
-  });
-  fetch(API_URL + '?' + params.toString(), { mode: 'no-cors' })
-    .catch(err => console.error('저장 실패:', err));
+  // JSONBin에 저장 (비동기)
+  try {
+    await saveLetters();
+  } catch (err) {
+    console.error('편지 저장 실패:', err);
+    showToast('⚠ 저장 중 오류가 발생했습니다.');
+  }
 }
 
 /* ══════════════════════════════════════
