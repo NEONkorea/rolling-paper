@@ -121,19 +121,16 @@ async function submitLetter() {
     document.getElementById('boardSurface').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 200);
 
-  // GET 방식으로 저장 (CORS 없음)
-  try {
-    const params = new URLSearchParams({
-      action:    'write',
-      message:   encodeURIComponent(message),
-      color:     selectedColor,
-      date:      date,
-      timestamp: letter.timestamp
-    });
-    await fetch(`${API_URL}?${params}`);
-  } catch (err) {
-    console.error('저장 실패:', err);
-  }
+  // GET + no-cors 방식으로 저장 (이중인코딩 제거, 리다이렉트 우회)
+  const params = new URLSearchParams({
+    action:    'write',
+    message:   message,
+    color:     selectedColor,
+    date:      date,
+    timestamp: letter.timestamp
+  });
+  fetch(API_URL + '?' + params.toString(), { mode: 'no-cors' })
+    .catch(err => console.error('저장 실패:', err));
 }
 
 /* ══════════════════════════════════════
