@@ -5,7 +5,7 @@
    ★ 사용 전 아래 두 줄을 반드시 채워주세요 ★
 ══════════════════════════════════════ */
 
-const JSONBIN_BIN_ID  = '6a058dd4250b1311c34b11a2';   // ← JSONBin에서 생성한 Bin ID
+const JSONBIN_BIN_ID  = '6a058eb4adc21f119a9af82f';   // ← JSONBin에서 생성한 Bin ID
 const JSONBIN_API_KEY = '$2a$10$cSEG.dW9WgzLHDluVnqsyuvrJM3jAWy5uq5RyXt6WhjG0Aoe9zOne';   // ← JSONBin API Key (X-Master-Key)
 
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
